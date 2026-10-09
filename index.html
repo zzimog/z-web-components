@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>html-wc2</title>
+    <style>
+      :focus,
+      :focus-visible {
+        outline: 2px solid red;
+      }
+      z-button {
+        display: inline-block;
+        padding: 1px 6px;
+        border: 1px solid gray;
+        background-color: whitesmoke;
+        cursor: default;
+      }
+      z-accordion-trigger,
+      z-accordion-content {
+        display: block;
+        border: 1px solid gray;
+      }
+    </style>
+  </head>
+  <body>
+    <button>This is a regular button</button>
+    <z-button>This is a <i>z-button</i></z-button>
+
+    <z-accordion [onchange]>
+      <z-accordion-item value="1">
+        <z-accordion-trigger>Lorem ipsum</z-accordion-trigger>
+        <z-accordion-content>
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Atque eum
+          laudantium labore laborum rem animi saepe consequuntur! Eius, vitae
+          doloribus? Laborum quasi dignissimos iure atque accusamus repudiandae
+          fugit reprehenderit a.
+        </z-accordion-content>
+      </z-accordion-item>
+      <z-accordion-item value="2">
+        <z-accordion-trigger>Dolor sit amet</z-accordion-trigger>
+        <z-accordion-content>
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusamus
+          quia laboriosam sapiente, laudantium tempore, ratione amet provident,
+          minima autem corporis reiciendis rem deleniti quibusdam. Debitis minus
+          minima accusamus libero modi.
+        </z-accordion-content>
+      </z-accordion-item>
+    </z-accordion>
+
+    <!-- index -->
+    <script type="module" src="/src/index.ts"></script>
+  </body>
+</html>

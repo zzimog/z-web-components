@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>html-wc2</title>
+  </head>
+  <body>
+    <div style="margin-bottom: 2rem">
+      <label>
+        Enter name:
+        <input type="text" autocomplete="off" />
+      </label>
+      <button type="button" onclick="setNameProp()">Set prop</button>
+      <button type="button" onclick="setNameAttr()">Set attr</button>
+    </div>
+
+    <z-greetings name="Pippo"></z-greetings>
+
+    <script>
+      const input = document.getElementsByTagName('input')[0];
+      const component = document.getElementsByTagName('z-greetings')[0];
+      const setNameProp = () => (component.name = input.value);
+      const setNameAttr = () => component.setAttribute('name', input.value);
+      const getName = () => (input.value = component.name);
+      component.addEventListener('mount', getName);
+      component.addEventListener('change', getName);
+    </script>
+
+    <!-- index -->
+    <script type="module" src="/src/index.ts"></script>
+  </body>
+</html>
