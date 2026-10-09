@@ -6,8 +6,8 @@ export class ZButton extends ZElement {
   constructor() {
     super();
 
-    this.role = 'button';
-    this.tabIndex = 0;
+    this.role ??= 'button';
+    this.tabIndex ??= 0;
     this.addEventListener('pointerdown', (event: PointerEvent) => {
       event.preventDefault();
       this.focus({ preventScroll: true });

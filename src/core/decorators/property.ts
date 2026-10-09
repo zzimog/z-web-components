@@ -89,10 +89,12 @@ export function property<T extends ReactiveElement, V>(
         },
         set(newValue: V) {
           const { type, parser } = options;
-          if (newValue !== null && typeof newValue !== type) {
+          /*
+          if (newValue && typeof newValue !== type) {
             const msg = `Expected \`${type}\` but got \`${typeof newValue}\``;
             throw new TypeError(msg);
           }
+          */
 
           const parsedOldValue = parser.toAttribute(value, type);
           const parsedNewValue = parser.toAttribute(newValue, type);

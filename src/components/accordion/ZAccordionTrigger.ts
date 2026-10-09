@@ -1,26 +1,38 @@
-import { component } from '@core/decorators';
+import { useContext } from '@core/context';
+import { component, property } from '@core/decorators';
 import { useId } from '@core/utils';
 import { ZButton } from '../button';
 import { TAG_NAME } from './ZAccordion';
-import { useContext } from '@core/context';
 import { accordionItemContext } from './ZAccordionItem';
 
 @component(`${TAG_NAME}-trigger`)
 export class ZAccordionTrigger extends ZButton {
+  @property()
+  id = useId();
+
+  @property({ attribute: 'aria-controls', reactive: false })
+  controls?: string;
+
+  @property({ attribute: 'aria-expanded', reactive: false })
+  expanded?: boolean;
+
   constructor() {
     super();
 
-    this.id = this.id || useId();
-
-    const context = useContext(this, accordionItemContext, (value) => {
-      const expanded = value.open ? 'true' : 'false';
-      this.setAttribute('aria-controls', 'ACCORDION_CONTENT_ID');
-      this.setAttribute('aria-expanded', expanded);
+    const getContext = useContext(this, accordionItemContext, (context) => {
+      this.controls = context.contentId;
+      this.expanded = context.open;
+      context.onTriggerIdChange(this.id);
     });
 
-    if (context) {
-      const { open, onOpenChange } = context;
-      this.addEventListener('click', () => onOpenChange(!open));
-    }
+    this.update = () => {
+      const context = getContext();
+      context?.onTriggerIdChange(this.id);
+    };
+
+    this.addEventListener('click', () => {
+      const context = getContext();
+      context?.onOpenChange(!context?.open);
+    });
   }
 }

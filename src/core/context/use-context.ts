@@ -6,8 +6,10 @@ export function useContext<T extends ContextValue>(
   target: HTMLElement,
   context: Context<T>,
   contextCallback?: ContextCallback<T>,
-) {
-  let contextValue: Context<T>;
+): () => T | undefined {
+  const contextRef = {
+    value: undefined,
+  };
 
   target.dispatchEvent(
     new CustomEvent('context-request', {
@@ -16,12 +18,12 @@ export function useContext<T extends ContextValue>(
       detail: {
         context,
         callback: (context: T) => {
-          contextValue = context;
+          (contextRef as Context<T>).value = context;
           contextCallback?.(context);
         },
       },
     }),
   );
 
-  return contextValue;
+  return () => contextRef.value;
 }
