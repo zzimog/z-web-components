@@ -1,5 +1,5 @@
 import { ReactiveElement } from './ReactiveElement';
-import { shallowEqual } from './utils';
+import { shallowEqual, standardEvents } from './utils';
 
 type Effect = () => EffectCleanup;
 type EffectCleanup = () => void;
@@ -17,6 +17,20 @@ export abstract class ZElement extends ReactiveElement {
     super._$update();
     this._$isUpdating = false;
     this._$updateCounter = 0;
+  }
+
+  constructor() {
+    super();
+
+    standardEvents.forEach((eventName) => {
+      const method = `on${eventName}` as keyof typeof this;
+      if (method in this && typeof this[method] === 'function') {
+        const event = eventName.toLowerCase();
+        this.addEventListener(event, (e: Event) => {
+          (this[method] as EventListener).call(this, e);
+        });
+      }
+    });
   }
 
   connectedCallback() {

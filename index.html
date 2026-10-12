@@ -6,29 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>html-wc2</title>
     <style>
-      :focus,
-      :focus-visible {
-        outline: 2px solid red;
-      }
-      z-button {
-        display: inline-block;
-        padding: 1px 6px;
-        border: 1px solid gray;
-        background-color: whitesmoke;
-        cursor: default;
-      }
       z-accordion-trigger,
-      z-accordion-content {
+      z-accordion-content:not([hidden]) {
         display: block;
         border: 1px solid gray;
+      }
+      z-accordion-content:not(:defined) {
+        display: none !important;
+        visibility: hidden !important;
       }
     </style>
   </head>
   <body>
-    <button>This is a regular button</button>
-    <z-button>This is a <i>z-button</i></z-button>
-
-    <z-accordion [onchange]>
+    <z-accordion>
       <z-accordion-item value="1">
         <z-accordion-trigger>Lorem ipsum</z-accordion-trigger>
         <z-accordion-content>

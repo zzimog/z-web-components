@@ -8,41 +8,48 @@ import { accordionItemContext } from './ZAccordionItem';
 @component(`${TAG_NAME}-content`)
 export class ZAccordionContent extends ZElement {
   @property()
-  id = useId();
+  id;
 
   @property({ attribute: 'aria-labelledby' })
   labelledby?: string;
 
-  @property({ attribute: 'data-open' })
-  expanded?: boolean;
+  @property({ type: 'boolean' })
+  hidden: boolean;
 
-  getContext: unknown;
+  protected _$fragment: DocumentFragment | null = null;
+
+  protected _$itemContext?: typeof accordionItemContext;
 
   constructor() {
     super();
-
+    this.id ??= useId();
     this.role ??= 'region';
+    this.hidden ??= false;
+  }
 
-    this.getContext = useContext(this, accordionItemContext, (context) => {
-      const { open, triggerId, onContentIdChange, onContentChange } = context;
+  onMount() {
+    this._$itemContext = useContext(this, accordionItemContext, (context) => {
+      const { triggerId, open, onContentIdChange } = context;
       this.labelledby = triggerId;
-      this.expanded = open;
+      this.hidden = !open;
       onContentIdChange(this.id);
-      onContentChange(this);
     });
   }
 
-  update() {
-    const context = this.getContext();
+  onIdChange() {
+    const context = this._$itemContext?.value;
     context?.onContentIdChange(this.id);
+  }
 
-    const fragment = document.createDocumentFragment();
-    if (this.expanded) {
-      this.appendChild(fragment);
-    } else {
+  update() {
+    this._$fragment ??= document.createDocumentFragment();
+
+    if (this.hidden) {
       while (this.firstChild) {
-        fragment.appendChild(this.firstChild);
+        this._$fragment.appendChild(this.firstChild);
       }
+    } else {
+      this.appendChild(this._$fragment);
     }
   }
 }

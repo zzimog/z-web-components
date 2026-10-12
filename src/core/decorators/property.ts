@@ -80,26 +80,19 @@ export function property<T extends ReactiveElement, V>(
     meta.properties = new Map(meta.properties ?? []);
     meta.properties.set(context.name, options);
 
-    let value: V;
+    const values = new WeakMap<T, V>();
 
     context.addInitializer(function (this: T) {
       Object.defineProperty(this, context.name, {
         get() {
-          return value;
+          return values.get(this);
         },
         set(newValue: V) {
           const { type, parser } = options;
-          /*
-          if (newValue && typeof newValue !== type) {
-            const msg = `Expected \`${type}\` but got \`${typeof newValue}\``;
-            throw new TypeError(msg);
-          }
-          */
-
-          const parsedOldValue = parser.toAttribute(value, type);
+          const parsedOldValue = parser.toAttribute(values.get(this), type);
           const parsedNewValue = parser.toAttribute(newValue, type);
           if (!Object.is(parsedOldValue, parsedNewValue)) {
-            value = newValue;
+            values.set(this, newValue);
             this._$updateProperty(context.name, newValue);
           }
         },
@@ -107,7 +100,7 @@ export function property<T extends ReactiveElement, V>(
     });
 
     return function (this: T, initialValue: V) {
-      value = initialValue;
+      values.set(this, initialValue);
       if (initialValue) {
         this._$updateProperty(context.name, initialValue);
       }

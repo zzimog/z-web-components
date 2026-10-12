@@ -13,26 +13,29 @@ export function createContextProvider<T extends ContextValue>(
   defaultValue: T,
 ) {
   const consumers = new Set<ContextCallback<T>>();
-  let currentValue = defaultValue;
+  let value = defaultValue;
 
   provider.addEventListener('context-request', (event: Event) => {
     const { detail } = event as ContextEvent<T>;
     if (context === detail.context) {
-      event.stopImmediatePropagation();
-      detail.callback?.(currentValue);
+      detail.callback?.(value);
       consumers.add(detail.callback);
+      event.stopPropagation();
     }
   });
 
   return {
+    get value() {
+      return value;
+    },
     set(values: Partial<T>) {
       const newValue = {
-        ...currentValue,
+        ...value,
         ...values,
       };
 
-      if (!shallowEqual(currentValue, newValue)) {
-        currentValue = newValue;
+      if (!shallowEqual(value, newValue)) {
+        value = newValue;
         consumers.forEach((f) => f(newValue));
       }
     },

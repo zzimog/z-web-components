@@ -13,17 +13,23 @@ export abstract class ReactiveElement extends HTMLElement {
   /**
    * Properties options map.
    */
-  protected static _$propsOptions = new Map<PropertyKey, PropertyOptions>();
+  protected static _$propsOptions: Map<PropertyKey, PropertyOptions>;
 
   /**
    * Attribute to property key map.
    */
-  protected static _$attributeToPropMap = new Map<string, PropertyKey>();
+  protected static _$attributeToPropMap: Map<string, PropertyKey>;
 
   /**
    * Returns a list of attributes created from element properties.
+   *
+   * @todo Needs refactoring
    */
   static get observedAttributes() {
+    const superCtor = Object.getPrototypeOf(this) as typeof ReactiveElement;
+    this._$propsOptions = new Map(superCtor._$propsOptions);
+    this._$attributeToPropMap = new Map(superCtor._$attributeToPropMap);
+
     const meta = this[Symbol.metadata] as ContextMetadata | undefined;
     if (meta && meta.properties) {
       const entries = meta.properties.entries() || [];

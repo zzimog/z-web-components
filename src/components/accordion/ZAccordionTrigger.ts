@@ -8,7 +8,7 @@ import { accordionItemContext } from './ZAccordionItem';
 @component(`${TAG_NAME}-trigger`)
 export class ZAccordionTrigger extends ZButton {
   @property()
-  id = useId();
+  id;
 
   @property({ attribute: 'aria-controls', reactive: false })
   controls?: string;
@@ -16,23 +16,29 @@ export class ZAccordionTrigger extends ZButton {
   @property({ attribute: 'aria-expanded', reactive: false })
   expanded?: boolean;
 
+  protected _$itemContext?: typeof accordionItemContext;
+
   constructor() {
     super();
+    this.id = useId();
+  }
 
-    const getContext = useContext(this, accordionItemContext, (context) => {
-      this.controls = context.contentId;
-      this.expanded = context.open;
-      context.onTriggerIdChange(this.id);
+  onMount() {
+    this._$itemContext = useContext(this, accordionItemContext, (context) => {
+      const { contentId, open, onTriggerIdChange } = context;
+      this.controls = contentId;
+      this.expanded = open;
+      onTriggerIdChange(this.id);
     });
+  }
 
-    this.update = () => {
-      const context = getContext();
-      context?.onTriggerIdChange(this.id);
-    };
+  onIdChange() {
+    const context = this._$itemContext!.value;
+    context?.onTriggerIdChange(this.id);
+  }
 
-    this.addEventListener('click', () => {
-      const context = getContext();
-      context?.onOpenChange(!context?.open);
-    });
+  onClick() {
+    const context = this._$itemContext!.value;
+    context?.onOpenChange(!context?.open);
   }
 }
